@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.w3c.dom.Element;
-
-import com.lperilla.projects.basfchallenge.exception.BasfException;
 
 import jakarta.servlet.http.Part;
 import lombok.experimental.UtilityClass;
@@ -35,7 +36,20 @@ public class Utils {
 		if (element != null && element.getElementsByTagName(tagName).getLength() > 0) {
 			return element.getElementsByTagName(tagName).item(0).getTextContent();
 		}
-		throw new BasfException(String.format("The tag %s there ins't in xml file", tagName));
+		return null;
+	}
+
+	public static Date getDate(final Element element, final String tagName) {
+		String date = getElementsByTagName(element, tagName);
+		if (date != null) {
+			try {
+				return DateUtils.parseDateStrictly(date, "yyyyMMdd");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 
 	public static void moveXmlFile(final File directory, final Part file) throws IOException {

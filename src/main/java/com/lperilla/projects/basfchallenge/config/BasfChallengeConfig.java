@@ -65,6 +65,6 @@ public class BasfChallengeConfig {
 	@Bean
 	public StanfordCoreNLP stanfordCoreNLP() {
 		return new StanfordCoreNLP(PropertiesUtils.asProperties("annotators",
-				"tokenize,ssplit,pos,lemma,depparse,natlog,openie", "coref.algorithm", "neural"));
+				"tokenize,pos", "coref.algorithm", "neural"));
 	}
 }

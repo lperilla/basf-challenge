@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import com.lperilla.projects.basfchallenge.entity.NERObject;
 import com.lperilla.projects.basfchallenge.entity.Patent;
 import com.lperilla.projects.basfchallenge.exception.BasfException;
 
@@ -50,7 +49,6 @@ public class PatentServiceImpl implements PatentService {
 	@Override
 	public boolean dropCollections() {
 		mongoTemplate.dropCollection(Patent.class);
-		mongoTemplate.dropCollection(NERObject.class);
 		return true;
 	}
 

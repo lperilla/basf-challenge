@@ -1,8 +1,8 @@
 package com.lperilla.projects.basfchallenge.integration.handler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.integration.core.GenericHandler;
 import org.springframework.integration.support.MessageBuilder;
@@ -26,24 +26,30 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class NERProcessHandling implements GenericHandler<Patent> {
 
-    private StanfordCoreNLP stanfordCoreNLP;
+	private StanfordCoreNLP stanfordCoreNLP;
 
-    @Override
-    public Object handle(Patent payload, MessageHeaders headers) {
-        Annotation doc = new Annotation(payload.getAbstractText());
-        stanfordCoreNLP.annotate(doc);
+	private static final List<String> PART_OF_SPEECH = Arrays.asList("NN", "NNS", "NNP", "NNPS");
 
-        List<CoreMap> sentences = doc.get(SentencesAnnotation.class);
-        List<NERObject> nerObjects = new ArrayList<>();
-        for (CoreMap sentence : sentences) {
-            for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-                var word = token.get(TextAnnotation.class);
-                var pos = token.get(PartOfSpeechAnnotation.class);
-                var beginPosition = token.beginPosition();
-                var endPostion = token.endPosition();
-                nerObjects.add(NERObject.builder().id(UUID.randomUUID()).word(word).pos(pos).beginPosition(beginPosition).endPosition(endPostion).build());
-            }
-        }
-        return MessageBuilder.withPayload(nerObjects);
-    }
+	@Override
+	public Object handle(Patent payload, MessageHeaders headers) {
+		Annotation doc = new Annotation(payload.getAbstractText());
+		stanfordCoreNLP.annotate(doc);
+		List<NERObject> nerObjects = new ArrayList<>();
+		List<CoreMap> sentences = doc.get(SentencesAnnotation.class);
+		for (CoreMap sentence : sentences) {
+			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+				var pos = token.get(PartOfSpeechAnnotation.class);
+				if (PART_OF_SPEECH.contains(pos)) {
+					nerObjects.add(NERObject.builder()//
+							.pos(pos)//
+							.word(token.get(TextAnnotation.class))//
+							.beginPosition(token.beginPosition())//
+							.endPosition(token.endPosition())//
+							.build());
+				}
+			}
+		}
+		payload.setNer(nerObjects);
+		return MessageBuilder.withPayload(payload);
+	}
 }

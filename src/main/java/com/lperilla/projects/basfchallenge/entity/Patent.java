@@ -1,5 +1,7 @@
 package com.lperilla.projects.basfchallenge.entity;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -27,4 +29,6 @@ public class Patent {
     private String docNumber;
 
     private String kind;
+   
+    private List<NERObject> ner;
 }

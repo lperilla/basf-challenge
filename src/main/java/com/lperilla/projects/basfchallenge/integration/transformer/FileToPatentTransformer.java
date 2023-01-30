@@ -3,6 +3,7 @@ package com.lperilla.projects.basfchallenge.integration.transformer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -61,7 +62,8 @@ public class FileToPatentTransformer extends AbstractFilePayloadTransformer<Pate
                     .country(country) //
                     .docNumber(docNumber)//
                     .kind(kind)//
-                    .date(date)
+                    .date(date)//
+                    .ner(new ArrayList<>())//
                     .build();
         }catch(XPathExpressionException | ParserConfigurationException | SAXException | IOException ex){
             throw new BasfException("Error in the transformation of the file to xml", ex);

@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    context-path: /bash-challenge
+    context-path: /basf-challenge
 spring:
   data:
     mongodb:
