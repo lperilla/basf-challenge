@@ -9,7 +9,6 @@ import org.springframework.integration.annotation.IntegrationComponentScan;
 @IntegrationComponentScan
 @EnableMongoRepositories
 public class BasfChallengeApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(BasfChallengeApplication.class, args);
 	}

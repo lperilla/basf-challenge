@@ -8,11 +8,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.InboundChannelAdapter;
 import org.springframework.integration.annotation.Poller;
+import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.file.FileReadingMessageSource;
 import org.springframework.integration.file.filters.CompositeFileListFilter;
 import org.springframework.integration.file.filters.SimplePatternFileListFilter;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.MessageChannel;
 
 import com.lperilla.projects.basfchallenge.integration.handler.NERPersistenceHandling;
 import com.lperilla.projects.basfchallenge.integration.handler.NERProcessHandling;
@@ -49,22 +52,30 @@ public class BasfChallengeConfig {
 	}
 
 	@Bean
+	public MessageChannel errorChannel() {
+		return new DirectChannel();
+	}
+
+	@Bean
 	@Autowired
 	public IntegrationFlow processFileFlow(FileToPatentTransformer fileToPatentTransformer,
 			PatentPersistenceHandling patentPersistenceHandling, //
 			NERProcessHandling nerProcessHandling, //
-			NERPersistenceHandling nerPersistenceHandling) {
-		fileToPatentTransformer.setDeleteFiles(true);
+			NERPersistenceHandling nerPersistenceHandling, //
+			MessageChannel errorChannel) {
 		return f -> f.channel("fileInputChannel") //
 				.transform(fileToPatentTransformer) //
 				.handle(patentPersistenceHandling) //
 				.handle(nerProcessHandling) //
-				.handle(nerPersistenceHandling);
+				.handle(nerPersistenceHandling)//
+				.handle((e, headers) -> {
+					errorChannel.send(MessageBuilder.withPayload(e).build());
+					return null;
+				});
 	}
 
 	@Bean
 	public StanfordCoreNLP stanfordCoreNLP() {
-		return new StanfordCoreNLP(PropertiesUtils.asProperties("annotators",
-				"tokenize,pos", "coref.algorithm", "neural"));
+		return new StanfordCoreNLP(PropertiesUtils.asProperties("annotators", "tokenize,pos"));
 	}
 }

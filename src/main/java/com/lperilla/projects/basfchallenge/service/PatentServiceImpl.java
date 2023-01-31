@@ -1,7 +1,6 @@
 package com.lperilla.projects.basfchallenge.service;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -26,22 +25,15 @@ public class PatentServiceImpl implements PatentService {
 
 	@Override
 	public void processFile(final Part file) {
-		log.info("{} : {}", file.getSubmittedFileName(), file.getContentType());
+		log.info("Processing File {} : {}", file.getSubmittedFileName(), file.getContentType());
 		if (Utils.isXmlFile(file.getContentType())) {
-			try {
-				log.info("Moving {} file in directory {}", file.getSubmittedFileName(), directory);
-				Utils.moveXmlFile(directory, file);
-			} catch (IOException e) {
-				throw new BasfException(String.format("Error moving %s file to directory %s", file.getSubmittedFileName(), directory), e);
-			}
+			log.info("Moving {} file in directory {}", file.getSubmittedFileName(), directory);
+			Utils.moveXmlFile(directory, file);
 		} else if (Utils.isZipFile(file.getContentType())) {
-			try {
-				log.info("Unzipping {} file in directory {}", file.getSubmittedFileName(), directory);
-				Utils.unZip(directory, file);
-			} catch (IOException e) {
-				throw new BasfException(String.format("Error unzipping %s file in directory %s", file.getSubmittedFileName(), directory), e);
-			}
-		} else {
+			log.info("Unzipping {} file in directory {}", file.getSubmittedFileName(), directory);
+			Utils.unZip(directory, file);
+		}
+		else {
 			throw new BasfException(String.format("Invalid %s file type. Only XML and ZIP files are allowed.", file.getContentType()));
 		}
 	}
