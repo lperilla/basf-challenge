@@ -11,7 +11,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: /home/lperilla/Descargas
+      max-file-size: 10MB
 graphql:
   servlet:
     # Sets if GraphQL servlet should be created and exposed. If not specified defaults to "true".
@@ -43,4 +43,4 @@ graphql:
       enabled: false
       version: latest
 basf:
-  directory: /home/lperilla/Descargas/back_20001_40000
+  directory: /tmp/basf-challenge

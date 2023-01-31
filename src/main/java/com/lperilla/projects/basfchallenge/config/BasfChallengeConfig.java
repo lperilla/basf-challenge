@@ -1,9 +1,15 @@
 package com.lperilla.projects.basfchallenge.config;
 
-import java.io.File;
-
+import com.lperilla.projects.basfchallenge.integration.handler.NERPersistenceHandling;
+import com.lperilla.projects.basfchallenge.integration.handler.NERProcessHandling;
+import com.lperilla.projects.basfchallenge.integration.handler.PatentPersistenceHandling;
+import com.lperilla.projects.basfchallenge.integration.transformer.FileToPatentTransformer;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.util.PropertiesUtils;
+import graphql.kickstart.servlet.apollo.ApolloScalars;
+import graphql.schema.GraphQLScalarType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.InboundChannelAdapter;
@@ -17,65 +23,53 @@ import org.springframework.integration.file.filters.SimplePatternFileListFilter;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 
-import com.lperilla.projects.basfchallenge.integration.handler.NERPersistenceHandling;
-import com.lperilla.projects.basfchallenge.integration.handler.NERProcessHandling;
-import com.lperilla.projects.basfchallenge.integration.handler.PatentPersistenceHandling;
-import com.lperilla.projects.basfchallenge.integration.transformer.FileToPatentTransformer;
-
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.util.PropertiesUtils;
-import graphql.kickstart.servlet.apollo.ApolloScalars;
-import graphql.schema.GraphQLScalarType;
+import java.io.File;
 
 @Configuration
+@EnableConfigurationProperties(BasfChallengeProperties.class)
 public class BasfChallengeConfig {
+    @Bean
+    public GraphQLScalarType uploadScalarType() {
+        return ApolloScalars.Upload;
+    }
 
-	@Value("${basf.directory}")
-	private File directory;
+    @Bean
+    @InboundChannelAdapter(value = "fileInputChannel", poller = @Poller(fixedDelay = "1000"))
+    public MessageSource<File> fileReadingMessageSource(BasfChallengeProperties basfChallengeProperties) {
+        CompositeFileListFilter<File> filters = new CompositeFileListFilter<>();
+        filters.addFilter(new SimplePatternFileListFilter("*.xml"));
 
-	@Bean
-	public GraphQLScalarType uploadScalarType() {
-		return ApolloScalars.Upload;
-	}
+        FileReadingMessageSource source = new FileReadingMessageSource();
+        source.setAutoCreateDirectory(true);
+        source.setDirectory(basfChallengeProperties.getDirectory());
+        source.setFilter(filters);
+        return source;
+    }
 
-	@Bean
-	@InboundChannelAdapter(value = "fileInputChannel", poller = @Poller(fixedDelay = "1000"))
-	public MessageSource<File> fileReadingMessageSource() {
-		CompositeFileListFilter<File> filters = new CompositeFileListFilter<>();
-		filters.addFilter(new SimplePatternFileListFilter("*.xml"));
+    @Bean
+    public MessageChannel errorChannel() {
+        return new DirectChannel();
+    }
 
-		FileReadingMessageSource source = new FileReadingMessageSource();
-		source.setAutoCreateDirectory(true);
-		source.setDirectory(directory);
-		source.setFilter(filters);
-		return source;
-	}
+    @Bean
+    public IntegrationFlow processFileFlow(FileToPatentTransformer fileToPatentTransformer, //
+                                           PatentPersistenceHandling patentPersistenceHandling, //
+                                           NERProcessHandling nerProcessHandling, //
+                                           NERPersistenceHandling nerPersistenceHandling, //
+                                           MessageChannel errorChannel) {
+        return f -> f.channel("fileInputChannel") //
+                .transform(fileToPatentTransformer) //
+                .handle(patentPersistenceHandling) //
+                .handle(nerProcessHandling) //
+                .handle(nerPersistenceHandling)//
+                .handle((e, headers) -> {
+                    errorChannel.send(MessageBuilder.withPayload(e).build());
+                    return null;
+                });
+    }
 
-	@Bean
-	public MessageChannel errorChannel() {
-		return new DirectChannel();
-	}
-
-	@Bean
-	@Autowired
-	public IntegrationFlow processFileFlow(FileToPatentTransformer fileToPatentTransformer,
-			PatentPersistenceHandling patentPersistenceHandling, //
-			NERProcessHandling nerProcessHandling, //
-			NERPersistenceHandling nerPersistenceHandling, //
-			MessageChannel errorChannel) {
-		return f -> f.channel("fileInputChannel") //
-				.transform(fileToPatentTransformer) //
-				.handle(patentPersistenceHandling) //
-				.handle(nerProcessHandling) //
-				.handle(nerPersistenceHandling)//
-				.handle((e, headers) -> {
-					errorChannel.send(MessageBuilder.withPayload(e).build());
-					return null;
-				});
-	}
-
-	@Bean
-	public StanfordCoreNLP stanfordCoreNLP() {
-		return new StanfordCoreNLP(PropertiesUtils.asProperties("annotators", "tokenize,pos"));
-	}
+    @Bean
+    public StanfordCoreNLP stanfordCoreNLP() {
+        return new StanfordCoreNLP(PropertiesUtils.asProperties("annotators", "tokenize,pos"));
+    }
 }

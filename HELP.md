@@ -1,6 +1,6 @@
 # Getting Started
 
->Info: All steps was executed for linux OS, for windows  you should modified the commands
+> Info: All steps was executed for linux OS, for windows you should modified the commands
 
 ## Download from github
 
@@ -11,13 +11,16 @@ git clone https://github.com/lperilla/basf-challenge.git
 ```
 
 Go to downloaded folder:
+
 ```shell
 cd basf-challenge
 ```
 
 ## What we will Need
 
-You will also need a Kubernetes cluster and the command line tool Kubectl. You can create a cluster locally by using Minikube on Docker. Before proceeding further, verify that you can run kubectl commands from the shell. The following example uses minikube:
+You will also need a Kubernetes cluster and the command line tool Kubectl. You can create a cluster locally by using
+Minikube on Docker. Before proceeding further, verify that you can run kubectl commands from the shell. The following
+example uses minikube:
 
 ```shell
 $ kubectl cluster-info
@@ -40,16 +43,19 @@ service/kubernetes   ClusterIP   10.43.0.1    <none>        443/TCP   7m13s
 You can then build the application:
 
 * Linux:
+
 ```Shell
 ./mvnw install
 ```
 
 * Windows:
+
 ```cmd
 ./mvnw.cmd install
 ```
 
-Then you can see the result of the build. If the build was successful, you should see a JAR file similar to the following:
+Then you can see the result of the build. If the build was successful, you should see a JAR file similar to the
+following:
 
 ```shell
 ls -l target/*.jar
@@ -58,15 +64,18 @@ ls -l target/*.jar
 
 ### Containerize the Application
 
-For containerizing the application, as long as you are already building a Spring Boot jar file, you only need to call the plugin directly. 
+For containerizing the application, as long as you are already building a Spring Boot jar file, you only need to call
+the plugin directly.
 The following command uses Maven:
 
 * Linux:
+
 ```shell
 ./mvnw spring-boot:build-image
 ```
 
 * Windows:
+
 ```
 ./mvnw.cmd spring-boot:build-image
 ```
@@ -80,11 +89,13 @@ $ docker run -p 8080:8080 basf-challenge:${project.ersion}
 Then you can check that it works in another terminal:
 
 * Linux:
+
 ```shell
 $ curl localhost:8080/basf-challenge/actuator/health
 ```
 
-You cannot push the image unless you authenticate with Dockerhub (docker login), but there is already an image there that should work. If you were authenticated, you could:
+You cannot push the image unless you authenticate with Dockerhub (docker login), but there is already an image there
+that should work. If you were authenticated, you could:
 
 ```shell
 docker tag ${IMAGE_ID} lperilla/challenges:basf-challenge
@@ -128,7 +139,16 @@ NAME                                        DESIRED   CURRENT   READY   AGE
 replicaset.apps/basf-challenge-7c7cff44f5   1         1         1       9h
 ```
 
-Now you need to be able to connect to the application, which you have exposed as a Service in Kubernetes. One way to do that, which works great at development time, is to create an SSH tunnel:
+Now you need to be able to connect to the application, which you have exposed as a Service in Kubernetes. One way to do
+that, which works great at development time, is to create an SSH tunnel:
+
+* port-forward mongodb:
+
+```
+kubectl port-forward mongodb-77fdf745dd-wcwvf 27017:27017
+```
+
+* port-forward application:
 
 ```
 kubectl port-forward pod/basf-challenge-... 8080:8080
@@ -164,6 +184,7 @@ Now you should can to see the dashboard from a web browser:
 http://127.0.0.1:40337/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#/service?namespace=default
 
 ### Reference Documentation
+
 For further reference, please consider the following sections:
 
 * [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
@@ -173,6 +194,7 @@ For further reference, please consider the following sections:
 * [Spring Reactive Web](https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#web.reactive)
 
 ### Guides
+
 The following guides illustrate how to use some features concretely:
 
 * [Building a RESTful Web Service with Spring Boot Actuator](https://spring.io/guides/gs/actuator-service/)

@@ -3,8 +3,8 @@ kind: ConfigMap
 metadata:
   name: basf-mongo-config
 data:
- host: basf-mongo-bd
- database: basfbd
+  host: basf-mongo-bd
+  database: basfbd
 ---
 apiVersion: v1
 kind: Service
@@ -16,9 +16,9 @@ spec:
   selector:
     app: mongodb
   ports:
-  - name: mongodb
-    port: 27017
-    targetPort: 27017
+    - name: mongodb
+      port: 27017
+      targetPort: 27017
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -35,10 +35,10 @@ spec:
         app: mongodb
     spec:
       containers:
-      - name: mongodb
-        image: mongo:latest
-        ports:
-        - containerPort: 27017
+        - name: mongodb
+          image: mongo:latest
+          ports:
+            - containerPort: 27017
 ---
 apiVersion: v1
 kind: Service
@@ -48,15 +48,15 @@ metadata:
   name: basf-challenge-service
 spec:
   ports:
-  - name: 8080-8080
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - name: 8080-8080
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
   selector:
     app: basf-challenge
   type: ClusterIP
 status:
-  loadBalancer: {}
+  loadBalancer: { }
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -69,23 +69,23 @@ spec:
   selector:
     matchLabels:
       app: basf-challenge
-  strategy: {}
+  strategy: { }
   template:
     metadata:
       labels:
         app: basf-challenge
     spec:
       containers:
-      - image: lperilla/challenges:basf-challenge
-        name: basf-challenge
-        resources: {}
-        volumeMounts:
-        - name: basf-storage
-          mountPath: /applis/basf
+        - image: lperilla/challenges:basf-challenge
+          name: basf-challenge
+          resources: { }
+          volumeMounts:
+            - name: basf-storage
+              mountPath: /applis/basf
       volumes:
-      - name: basf-storage
-        emptyDir: {}
-status: {}
+        - name: basf-storage
+          emptyDir: { }
+status: { }
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -94,12 +94,12 @@ metadata:
 spec:
   ingressClassName: basf-challenge-ingress
   rules:
-  - http:
-      paths:
-      - path: /actuator/health
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: basf-challenge-service
-            port:
-              number: 8080
+    - http:
+        paths:
+          - path: /actuator/health
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: basf-challenge-service
+                port:
+                  number: 8080

@@ -1,13 +1,12 @@
 package com.lperilla.projects.basfchallenge.query;
 
-import org.springframework.stereotype.Component;
-
 import graphql.kickstart.tools.GraphQLQueryResolver;
+import org.springframework.stereotype.Controller;
 
-@Component
+@Controller
 public class UploadFileQuery implements GraphQLQueryResolver {
 
-	public String sayHello(String name){
-		return "Hello "+name;
-	}
+    public String sayHello(String name) {
+        return "Hello " + name;
+    }
 }

@@ -4,8 +4,8 @@ import jakarta.servlet.http.Part;
 
 public interface PatentService {
 
-	void processFile(final Part part);
+    void processFile(final Part part);
 
-	boolean dropCollections();
+    boolean dropCollections();
 
 }

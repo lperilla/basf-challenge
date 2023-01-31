@@ -9,9 +9,9 @@ This means, your pipeline should:
 
 1. Read one or many file xml of patents.
 2. From these files you must extract:
-   - Year.
-   - Title.
-   - abstract.
+    - Year.
+    - Title.
+    - abstract.
 3. Persist these data in database.
 4. Run a Named Entity Recognition (NER) over the abstract text.
 5. Persis the NER output in the database.
@@ -20,7 +20,8 @@ This means, your pipeline should:
 ## Tech
 
 This project was developed with follow technicals features:
-- Apache Maven 3.8.7 
+
+- Apache Maven 3.8.7
 - Java 17
 - Spring boot version 3.0.2
 - Spring integration version 3.0.2
@@ -56,14 +57,14 @@ type Mutation {
 
 ### Query:
 
-- **sayHello**: 
-  - just a simple method that return "hello ${name}" 
+- **sayHello**:
+    - just a simple method that return "hello ${name}"
 
 ### Mutation:
 
-- **upload(file: Upload):** Boolean: 
-  - This is the main method, that can receive as a parameter a xml file or a collection of files inside a zip.
-  - This method only allow upload file xml and zip, otherwise it returns an error.
+- **upload(file: Upload):** Boolean:
+    - This is the main method, that can receive as a parameter a xml file or a collection of files inside a zip.
+    - This method only allow upload file xml and zip, otherwise it returns an error.
 
 ### Behavior for XML file
 
@@ -71,9 +72,10 @@ type Mutation {
 
 ### Behavior for zip file
 
-> It will unzip and move all xml files to the folder specified in the **bash.directory** property of the **application.yaml** to be processed :
+> It will unzip and move all xml files to the folder specified in the **bash.directory** property of the *
+*application.yaml** to be processed :
 
-> The zip should have the follow structure, (The files must be in the root of the zip): 
+> The zip should have the follow structure, (The files must be in the root of the zip):
 
     patent.zip
     - US06060048A.xml
