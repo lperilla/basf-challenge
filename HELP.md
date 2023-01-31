@@ -1,6 +1,21 @@
 # Getting Started
 
-# What we will Need
+>Info: All steps was executed for linux OS, for windows  you should modified the commands
+
+## Download from github
+
+We must download the project from gitlab with the following command
+
+```shell
+git clone https://github.com/lperilla/basf-challenge.git
+```
+
+Go to downloaded folder:
+```shell
+cd basf-challenge
+```
+
+## What we will Need
 
 You will also need a Kubernetes cluster and the command line tool Kubectl. You can create a cluster locally by using Minikube on Docker. Before proceeding further, verify that you can run kubectl commands from the shell. The following example uses minikube:
 
@@ -24,13 +39,19 @@ service/kubernetes   ClusterIP   10.43.0.1    <none>        443/TCP   7m13s
 
 You can then build the application:
 
-```
+* Linux:
+```Shell
 ./mvnw install
+```
+
+* Windows:
+```cmd
+./mvnw.cmd install
 ```
 
 Then you can see the result of the build. If the build was successful, you should see a JAR file similar to the following:
 
-```
+```shell
 ls -l target/*.jar
 -rw-rw-r-- 1 lperilla lperilla 23670647 ene 25 22:47 target/basf-challenge-0.0.1-SNAPSHOT.jar
 ```
@@ -40,25 +61,32 @@ ls -l target/*.jar
 For containerizing the application, as long as you are already building a Spring Boot jar file, you only need to call the plugin directly. 
 The following command uses Maven:
 
-```
+* Linux:
+```shell
 ./mvnw spring-boot:build-image
+```
+
+* Windows:
+```
+./mvnw.cmd spring-boot:build-image
 ```
 
 You can run the container locally:
 
-```
-$ docker run -p 8080:8080 basf-challenge:0.0.1-SNAPSHOT
+```shell
+$ docker run -p 8080:8080 basf-challenge:${project.ersion}
 ```
 
 Then you can check that it works in another terminal:
 
-```
-$ curl localhost:8080/actuator/health
+* Linux:
+```shell
+$ curl localhost:8080/basf-challenge/actuator/health
 ```
 
 You cannot push the image unless you authenticate with Dockerhub (docker login), but there is already an image there that should work. If you were authenticated, you could:
 
-```
+```shell
 docker tag ${IMAGE_ID} lperilla/challenges:basf-challenge
 docker push lperilla/challenges:basf-challenge
 ```
@@ -71,7 +99,7 @@ https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-regi
 
 ## Minikube
 
-```
+```shell
 minikube start
 ```
 
@@ -79,7 +107,7 @@ minikube start
 
 Now you have a container that runs and exposes port 8080, so all you need to make Kubernetes run the deployment.yaml
 
-```
+```shell
 kubectl apply -f deployment.yaml
 ```
 
@@ -108,8 +136,8 @@ kubectl port-forward pod/basf-challenge-... 8080:8080
 
 Then you can verify that the app is running in another terminal:
 
-```
-$ curl http://localhost:8080/actuator/health
+```shell
+$ curl http://localhost:8080/basf-challenge/actuator/health
 {"status":"UP"}
 ```
 
@@ -127,7 +155,7 @@ kubectl exec --stdin --tty basf-challenge-... -- /bin/bash
 
 To see the kubernetes dashboard, we need to start it with the follow command:
 
-```
+```shell
 minikube dashboard
 ```
 

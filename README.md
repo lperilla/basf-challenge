@@ -20,6 +20,7 @@ This means, your pipeline should:
 ## Tech
 
 This project was developed with follow technicals features:
+- Apache Maven 3.8.7 
 - Java 17
 - Spring boot version 3.0.2
 - Spring integration version 3.0.2
