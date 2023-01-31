@@ -72,3 +72,12 @@ type Mutation {
 ### Behavior for zip file
 
 > It will unzip and move all xml files to the folder specified in the **bash.directory** property of the **application.yaml** to be processed :
+
+> The zip should have the follow structure, (The files must be in the root of the zip): 
+
+    patent.zip
+    - US06060048A.xml
+    - US06060049A.xml
+    . . .
+        
+
