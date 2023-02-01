@@ -15,8 +15,7 @@ public class UploadFileMutation implements GraphQLMutationResolver {
 
     public boolean upload(Part part) {
         Assert.notNull(part, "The file must not be null");
-        patentService.processFile(part);
-        return true;
+        return patentService.processFile(part);
     }
 
     public boolean dropCollections() {

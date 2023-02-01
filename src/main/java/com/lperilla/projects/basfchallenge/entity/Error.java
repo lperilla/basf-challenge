@@ -1,5 +1,6 @@
 package com.lperilla.projects.basfchallenge.entity;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,29 +8,27 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "patents")
-public class Patent {
+@Document(collection = "errors")
+public class Error implements Serializable {
 
     @Id
-    private String documentId;
+    private UUID id;
 
-    private String title;
+    private String fileName;
 
-    private String abstractText;
+    private LocalDateTime timestamp;
 
-    private String date;
+    private String failedMessage;
 
-    private String country;
+    private String cause;
 
-    private String docNumber;
-
-    private String kind;
-
-    private List<NERObject> ner;
 }

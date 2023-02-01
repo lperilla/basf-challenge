@@ -5,7 +5,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://127.0.0.1:27017/basfbd
+      uri: mongodb+srv://lperilla-mongodb:LLFYXYdDOrBL21oW@cluster0.zjrhi5h.mongodb.net/?retryWrites=true&w=majority
       database: basfbd
       port: 27017
   servlet:

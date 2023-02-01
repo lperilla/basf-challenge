@@ -8,7 +8,6 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.PropertiesUtils;
 import graphql.kickstart.servlet.apollo.ApolloScalars;
 import graphql.schema.GraphQLScalarType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +19,6 @@ import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.file.FileReadingMessageSource;
 import org.springframework.integration.file.filters.CompositeFileListFilter;
 import org.springframework.integration.file.filters.SimplePatternFileListFilter;
-import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 
 import java.io.File;
@@ -55,17 +53,12 @@ public class BasfChallengeConfig {
     public IntegrationFlow processFileFlow(FileToPatentTransformer fileToPatentTransformer, //
                                            PatentPersistenceHandling patentPersistenceHandling, //
                                            NERProcessHandling nerProcessHandling, //
-                                           NERPersistenceHandling nerPersistenceHandling, //
-                                           MessageChannel errorChannel) {
+                                           NERPersistenceHandling nerPersistenceHandling) {
         return f -> f.channel("fileInputChannel") //
                 .transform(fileToPatentTransformer) //
                 .handle(patentPersistenceHandling) //
                 .handle(nerProcessHandling) //
-                .handle(nerPersistenceHandling)//
-                .handle((e, headers) -> {
-                    errorChannel.send(MessageBuilder.withPayload(e).build());
-                    return null;
-                });
+                .handle(nerPersistenceHandling);
     }
 
     @Bean
