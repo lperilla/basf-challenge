@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -23,7 +24,9 @@ public class Patent {
 
     private String abstractText;
 
-    private String date;
+    private Date date;
+
+    private int year;
 
     private String country;
 

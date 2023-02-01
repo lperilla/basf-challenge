@@ -5,6 +5,7 @@ import com.lperilla.projects.basfchallenge.service.Utils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.integration.core.GenericTransformer;
 import org.springframework.integration.transformer.MessageTransformationException;
 import org.springframework.messaging.Message;
@@ -25,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 @Slf4j
 @Component
@@ -52,7 +54,7 @@ public class FileToPatentTransformer implements GenericTransformer<Message<File>
             var country = Utils.getElementsByTagName(element, "country");
             var docNumber = Utils.getElementsByTagName(element, "doc-number");
             var kind = Utils.getElementsByTagName(element, "kind");
-            var date = Utils.getElementsByTagName(element, "date");
+            var date = DateUtils.parseDateStrictly(Utils.getElementsByTagName(element, "date"), "yyyyMMdd");
             log.info("File {} processed successfully", file.getName());
             return MessageBuilder.createMessage(Patent.builder() //
                     .documentId(StringUtils.join(country, docNumber, kind))//
@@ -62,6 +64,7 @@ public class FileToPatentTransformer implements GenericTransformer<Message<File>
                     .docNumber(docNumber) //
                     .kind(kind) //
                     .date(date) //
+                    .year(Utils.getFieldFromDate(date, Calendar.YEAR))
                     .ner(new ArrayList<>()) //
                     .build(), message.getHeaders());
         } catch (Exception ex) {

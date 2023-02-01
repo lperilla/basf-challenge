@@ -3,7 +3,6 @@ package com.lperilla.projects.basfchallenge.service;
 import com.lperilla.projects.basfchallenge.exception.BasfException;
 import jakarta.servlet.http.Part;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.lang3.time.DateUtils;
 import org.w3c.dom.Element;
 
 import java.io.File;
@@ -11,6 +10,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -39,16 +40,21 @@ public class Utils {
         throw new BasfException(String.format("The tag %s there isn't in the document xml", tagName));
     }
 
-    public static Date getDate(final Element element, final String tagName) {
-        String date = getElementsByTagName(element, tagName);
+    public static int getFieldFromDate(Date date, int field) {
         if (date != null) {
-            try {
-                return DateUtils.parseDateStrictly(date, "yyyyMMdd");
-            } catch (ParseException e) {
-                throw new BasfException(String.format("Error parsing date %s", date), e);
-            }
+            var calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            return calendar.get(field);
         }
-        return null;
+        return -1;
+    }
+
+    public static Date dateParser(String date) {
+        try {
+            return new SimpleDateFormat("yyyyMMdd").parse(date);
+        } catch (ParseException e) {
+            throw new BasfException(String.format("Error parsing date %s", date), e);
+        }
     }
 
     public static long moveXmlFile(final File directory, final Part file) {
@@ -76,8 +82,7 @@ public class Utils {
                 zipEntry = zis.getNextEntry();
             }
             return true;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new BasfException(String.format("Error unzipping %s file in directory %s", file.getSubmittedFileName(), directory), e);
         }
     }
