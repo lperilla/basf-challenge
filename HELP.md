@@ -119,7 +119,7 @@ minikube start
 Now you have a container that runs and exposes port 8080, so all you need to make Kubernetes run the deployment.yaml
 
 ```shell
-kubectl apply -f deployment.yaml
+kubectl apply -f k8s/development/
 ```
 
 Check that the application is running:
@@ -164,7 +164,7 @@ $ curl http://localhost:8080/basf-challenge/actuator/health
 To delete all components from kubernetes, you can use the follow command:
 
 ```
-kubectl delete -f deployment.yaml
+kubectl delete -f k8s/development/
 ```
 
 Get a shell to the running container:
