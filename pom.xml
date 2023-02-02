@@ -11,7 +11,7 @@
 
     <groupId>com.lperilla.projects</groupId>
     <artifactId>basf-challenge</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>basf-challenge</name>
     <description>Demo project for Spring Boot</description>
 

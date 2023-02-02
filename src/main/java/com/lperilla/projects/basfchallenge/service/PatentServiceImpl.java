@@ -7,7 +7,9 @@ import com.lperilla.projects.basfchallenge.exception.BasfException;
 import jakarta.servlet.http.Part;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,7 +46,8 @@ public class PatentServiceImpl implements PatentService {
     }
 
     public List<Error> findAllError() {
-        return mongoTemplate.findAll(Error.class);
+        var query = new Query().with(Sort.by(Sort.Direction.DESC, "timestamp"));
+        return mongoTemplate.find(query, Error.class);
     }
 
 }

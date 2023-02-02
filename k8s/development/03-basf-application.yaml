@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: basf-challenge
+  name: basf-challenge-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: basf-challenge
+  template:
+    metadata:
+      labels:
+        app: basf-challenge
+    spec:
+      containers:
+        - image: lperilla/challenges:basf-challenge
+          name: basf-challenge
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 256Mi
+          env:
+            - name: MONGODB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: basf-configmap
+                  key: mongodb.host
+            - name: MONGODB_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: basf-configmap
+                  key: mongodb.database
+            - name: BASF_DIRECTORY
+              valueFrom:
+                configMapKeyRef:
+                  name: basf-configmap
+                  key: basf.directory
+          volumeMounts:
+            - mountPath: /applis/basf
+              name: basf-storage
+      volumes:
+        - name: basf-storage
+          emptyDir: { }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: basf-challenge-service
+  name: basf-challenge-service
+spec:
+  type: ClusterIP
+  ports:
+    - name: 8080-8080
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: basf-challenge
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basf-challenge-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /graphiql
+            pathType: Prefix
+            backend:
+              service:
+                name: basf-challenge-service
+                port:
+                  number: 8080

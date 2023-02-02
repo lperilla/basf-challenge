@@ -6,20 +6,6 @@ data:
   host: basf-mongo-bd
   database: basfbd
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: basf-mongodb-service
-  name: mongodb
-spec:
-  selector:
-    app: mongodb
-  ports:
-    - name: mongodb
-      port: 27017
-      targetPort: 27017
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -44,19 +30,15 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: basf-challenge-service
-  name: basf-challenge-service
+    app: basf-mongodb-service
+  name: mongodb
 spec:
-  ports:
-    - name: 8080-8080
-      port: 8080
-      protocol: TCP
-      targetPort: 8080
   selector:
-    app: basf-challenge
-  type: ClusterIP
-status:
-  loadBalancer: { }
+    app: mongodb
+  ports:
+    - name: mongodb
+      port: 27017
+      targetPort: 27017
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -69,7 +51,6 @@ spec:
   selector:
     matchLabels:
       app: basf-challenge
-  strategy: { }
   template:
     metadata:
       labels:
@@ -78,28 +59,41 @@ spec:
       containers:
         - image: lperilla/challenges:basf-challenge
           name: basf-challenge
-          resources: { }
           volumeMounts:
-            - name: basf-storage
-              mountPath: /applis/basf
+            - mountPath: /applis/basf
+              name: basf-storage
       volumes:
         - name: basf-storage
-          emptyDir: { }
-status: { }
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: basf-challenge-service
+  name: basf-challenge-service
+spec:
+  type: ClusterIP
+  ports:
+    - name: 8080-8080
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: basf-challenge
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: basf-challenge
+  name: basf-challenge-ingress
 spec:
-  ingressClassName: basf-challenge-ingress
   rules:
-    - http:
-        paths:
-          - path: /actuator/health
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: basf-challenge-service
-                port:
-                  number: 8080
+  - http:
+      paths:
+      - path: /graphiql
+        pathType: Prefix
+        backend:
+          service:
+            name: basf-challenge-service
+            port:
+              number: 8080
