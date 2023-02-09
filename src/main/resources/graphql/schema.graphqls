@@ -1,9 +1,9 @@
 scalar Upload
-scalar UUID
 
 type Query{
   sayHello(name: String!): String!
   findAllError: [Error]!
+  findAllPatent: [Patent]
 }
 
 type Mutation {
@@ -17,4 +17,23 @@ type Error{
     timestamp: String
     failedMessage: String
     cause: String
+}
+
+type Patent{
+    documentId:String
+    title: String
+    abstractText: String
+    date: String
+    year: Int
+    country: String
+    docNumber: String
+    kind: String
+    ner: [NERObject]
+}
+
+type NERObject{
+    word: String
+    pos: String
+    beginPosition: Int
+    endPosition: Int
 }

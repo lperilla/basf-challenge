@@ -1,7 +1,7 @@
 package com.lperilla.projects.basfchallenge.integration.transformer;
 
 import com.lperilla.projects.basfchallenge.entity.Patent;
-import com.lperilla.projects.basfchallenge.service.Utils;
+import com.lperilla.projects.basfchallenge.util.BasfUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -51,10 +51,10 @@ public class FileToPatentTransformer implements GenericTransformer<Message<File>
             var abstractText = xPath.compile(ABSTRACT_XPATH).evaluate(xmlDocument);
             var nodeList = (NodeList) xPath.compile(DOCUMENT_ID_XPATH).evaluate(xmlDocument, XPathConstants.NODESET);
             var element = (Element) nodeList.item(0);
-            var country = Utils.getElementsByTagName(element, "country");
-            var docNumber = Utils.getElementsByTagName(element, "doc-number");
-            var kind = Utils.getElementsByTagName(element, "kind");
-            var date = DateUtils.parseDateStrictly(Utils.getElementsByTagName(element, "date"), "yyyyMMdd");
+            var country = BasfUtils.getElementsByTagName(element, "country");
+            var docNumber = BasfUtils.getElementsByTagName(element, "doc-number");
+            var kind = BasfUtils.getElementsByTagName(element, "kind");
+            var date = DateUtils.parseDateStrictly(BasfUtils.getElementsByTagName(element, "date"), "yyyyMMdd");
             log.info("File {} processed successfully", file.getName());
             return MessageBuilder.createMessage(Patent.builder() //
                     .documentId(StringUtils.join(country, docNumber, kind))//
@@ -64,8 +64,7 @@ public class FileToPatentTransformer implements GenericTransformer<Message<File>
                     .docNumber(docNumber) //
                     .kind(kind) //
                     .date(date) //
-                    .year(Utils.getFieldFromDate(date, Calendar.YEAR))
-                    .ner(new ArrayList<>()) //
+                    .year(BasfUtils.getFieldFromDate(date, Calendar.YEAR)).ner(new ArrayList<>()) //
                     .build(), message.getHeaders());
         } catch (Exception ex) {
             ErrorMessage error = new ErrorMessage(ex, message.getHeaders());
@@ -73,8 +72,9 @@ public class FileToPatentTransformer implements GenericTransformer<Message<File>
         } finally {
             try {
                 Files.deleteIfExists(file.toPath());
-            } catch (IOException e) {
-                log.error(String.format("Error deleting file %s", file), e.getCause());
+            } catch (IOException ex) {
+                ErrorMessage error = new ErrorMessage(ex, message.getHeaders());
+                throw new MessageTransformationException(error, String.format("Error deleting file %s", file), ex.getCause());
             }
         }
     }

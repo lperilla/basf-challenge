@@ -1,0 +1,237 @@
+{
+	"info": {
+		"_postman_id": "ccee0534-f2f7-4c50-a0a2-1892d099c2a8",
+		"name": "basf",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14741668"
+	},
+	"item": [
+		{
+			"name": "Upload Xml File",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "operations",
+							"value": "{\"query\":\"mutation($file: Upload!){upload(file: $file)}\"}",
+							"type": "text"
+						},
+						{
+							"key": "map",
+							"value": "{\"file\": [\"variables.file\"]}",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/lperilla/Descargas/US06060048A.xml"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/basf-challenge/graphql",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"basf-challenge",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Zip File",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "operations",
+							"value": "{\"query\":\"mutation($file: Upload!){upload(file: $file)}\"}",
+							"type": "text"
+						},
+						{
+							"key": "map",
+							"value": "{\"file\": [\"variables.file\"]}",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/lperilla/Descargas/US06060.tar.xz"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/basf-challenge/graphql",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"basf-challenge",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Drop Collections",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "operations",
+							"value": "{\"query\":\"mutation{dropCollections}\"}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/basf-challenge/graphql",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"basf-challenge",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sayHello",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\n    sayHello(name: \"luis\")    \n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/basf-challenge/graphql",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"basf-challenge",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "findAllErrors",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\n    findAllError{\n        cause\n        failedMessage\n        fileName\n        id\n        timestamp\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/basf-challenge/graphql",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"basf-challenge",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "findAllPatent",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\n    findAllPatent{\n        title\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/basf-challenge/graphql",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"basf-challenge",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

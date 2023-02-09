@@ -24,7 +24,8 @@ class BasfChallengePropertiesTest {
         assertEquals("BasfChallengeProperties(directory=/tmp, partOfSpeech=[NN, NNS, NNP, NNPS])", properties.toString());
     }
 
-    void basfChallengePropertiesTest_withOutArgs(){
+    @Test
+    void basfChallengePropertiesTest_withOutArgs() {
         var properties = new BasfChallengeProperties();
         assertNotNull(properties);
         assertNull(properties.getDirectory());

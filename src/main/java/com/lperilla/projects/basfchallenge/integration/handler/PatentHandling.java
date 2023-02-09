@@ -19,6 +19,7 @@ public class PatentHandling implements GenericHandler<Patent> {
         try {
             payload.setNer(patentService.processAbstract(payload.getAbstractText()));
             log.info("Persisting Patent {}", payload.getDocumentId());
+            patentService.save(payload);
             return null;
         } finally {
             log.info("Patent {} saved successfully", payload.getDocumentId());

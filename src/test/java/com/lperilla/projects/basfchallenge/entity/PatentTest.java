@@ -1,6 +1,6 @@
 package com.lperilla.projects.basfchallenge.entity;
 
-import com.lperilla.projects.basfchallenge.service.Utils;
+import com.lperilla.projects.basfchallenge.util.BasfUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.Test;
 
@@ -18,15 +18,13 @@ class PatentTest {
                 .country("US") //
                 .abstractText("AbstractText")//
                 .date(DateUtils.parseDateStrictly("20010101", "yyyyMMdd")) //
-                .year(2001)
-                .docNumber("DocNumber1") //
+                .year(2001).docNumber("DocNumber1") //
                 .documentId("documentId1") //
                 .kind("A") //
                 .title("title") //
                 .ner(Collections.emptyList());
         assertNotNull(builder);
-        assertEquals("Patent(documentId=documentId1, title=title, abstractText=AbstractText, date=Mon Jan 01 00:00:00 CET 2001, year=2001, country=US, docNumber=DocNumber1, kind=A, ner=[])",
-                builder.build().toString());
+        assertEquals("Patent(documentId=documentId1, title=title, abstractText=AbstractText, date=Mon Jan 01 00:00:00 CET 2001, year=2001, country=US, docNumber=DocNumber1, kind=A, ner=[])", builder.build().toString());
     }
 
     @Test
@@ -53,7 +51,7 @@ class PatentTest {
     @Test
     void testDate() throws ParseException {
         Patent patent = new Patent();
-        patent.setDate(Utils.dateParser("20010101"));
+        patent.setDate(BasfUtils.dateParser("20010101"));
         assertEquals(DateUtils.parseDateStrictly("20010101", "yyyyMMdd"), patent.getDate());
     }
 
@@ -87,19 +85,15 @@ class PatentTest {
 
     @Test
     void testToString() throws ParseException {
-        Patent patent = new Patent("Doc1", "Title1", "AbstractText", DateUtils.parseDateStrictly("20230101", "yyyyMMdd"), 2023, "US", "1235", "A",
-                Collections.emptyList());
+        Patent patent = new Patent("Doc1", "Title1", "AbstractText", DateUtils.parseDateStrictly("20230101", "yyyyMMdd"), 2023, "US", "1235", "A", Collections.emptyList());
         assertNotNull(patent);
         assertNotNull(patent.getNer());
-        assertEquals(
-                "Patent(documentId=Doc1, title=Title1, abstractText=AbstractText, date=Sun Jan 01 00:00:00 CET 2023, year=2023, country=US, docNumber=1235, kind=A, ner=[])",
-                patent.toString());
+        assertEquals("Patent(documentId=Doc1, title=Title1, abstractText=AbstractText, date=Sun Jan 01 00:00:00 CET 2023, year=2023, country=US, docNumber=1235, kind=A, ner=[])", patent.toString());
     }
 
     @Test
     void testPatent() throws ParseException {
-        Patent patent = new Patent("Doc1", "Title1", "AbstractText", DateUtils.parseDateStrictly("20230101", "yyyyMMdd"), 2023, "US", "1235", "A",
-                Collections.emptyList());
+        Patent patent = new Patent("Doc1", "Title1", "AbstractText", DateUtils.parseDateStrictly("20230101", "yyyyMMdd"), 2023, "US", "1235", "A", Collections.emptyList());
         assertNotNull(patent);
         Patent patent2 = new Patent();
         assertNotNull(patent2);
